@@ -847,8 +847,7 @@ export default function WeatherDashboard() {
 
       setCurrentWeather(weatherData);
       setForecast(forecastData);
-      setHourForecast(hourForecast);
-    } catch (err) {
+      setHourForecast(Array.isArray(hourForecast) ? hourForecast : [])    } catch (err) {
       setError("Error al obtener datos del clima. Inténtalo de nuevo.");
       console.error(err);
     } finally {
@@ -893,7 +892,7 @@ export default function WeatherDashboard() {
           <CurrentWeatherCard
             weather={currentWeather}
             locationName={selectedLocation.LocalizedName}
-            hourly={hourForecast}
+            hourly={hourForecast ||[]}
           />
         </div>
       )}

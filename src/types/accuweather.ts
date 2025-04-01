@@ -133,7 +133,7 @@ export interface FiveDayForecast {
   DailyForecasts: DailyForecast[];
 }
 
-export type HourlyForecast = Array<{
+export interface HourlyForecast {
   DateTime: string;
   WeatherIcon: number;
   IconPhrase: string;
@@ -155,4 +155,4 @@ export type HourlyForecast = Array<{
     UnitType: number;
   };
   CloudCover: number;
-}>;
+}
