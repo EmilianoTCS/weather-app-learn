@@ -25,7 +25,7 @@ export default function WeatherDashboard() {
     null
   );
   const [forecast, setForecast] = useState<FiveDayForecast | null>(null);
-  const [hourForecast, setHourForecast] = useState<HourlyForecast | null>(null);
+  const [hourForecast, setHourForecast] = useState<HourlyForecast[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { units, toggleUnits } = useUnits();

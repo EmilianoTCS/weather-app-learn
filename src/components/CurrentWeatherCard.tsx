@@ -8,7 +8,7 @@ import HourlyForecastList from "./HourlyForecastList";
 interface CurrentWeatherCardProps {
   weather: CurrentWeather;
   locationName: string;
-  hourly: HourlyForecast | [];
+  hourly: HourlyForecast[]; 
 }
 
 export default function CurrentWeatherCard({

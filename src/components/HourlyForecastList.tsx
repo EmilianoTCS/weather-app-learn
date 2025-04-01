@@ -79,9 +79,9 @@ export default function ForecastList({ forecast }: HourlyForecastListProps) {
               transform: `translateX(-${currentIndex * cardWidth}%)`,
             }}
           >
-            {forecast.map((day) => (
+            {forecast.map((day, index) => (
               <div 
-                key={day.DateTime} 
+                key={index} 
                 className="flex-none" 
                 style={{ width: `${cardWidth}%` }}
               >
