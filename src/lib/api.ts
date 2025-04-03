@@ -4,10 +4,15 @@ import {
   CurrentWeather,
   FiveDayForecast,
   HourlyForecast,
+  AllInfo,
 } from "@/types/accuweather";
+import { GoogleGenAI } from "@google/genai";
 
 const API_KEY = process.env.NEXT_PUBLIC_ACCUWEATHER_API_KEY;
 const BASE_URL = process.env.NEXT_PUBLIC_ACCUWEATHER_BASE_URL;
+const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+
+const Gemini_AI = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 /**
  * Busca ubicación por coordenadas geográficas
@@ -134,4 +139,22 @@ export function getWeatherIconUrl(iconNumber: number): string {
   return `https://developer.accuweather.com/sites/default/files/${
     iconNumber < 10 ? "0" + iconNumber : iconNumber
   }-s.png`;
+}
+
+export default async function GeminiQuery(data: AllInfo) {
+  try {
+    const prompt = `En base al JSON que enviaré al final, dame una recomendación MUY breve para el día. El JSON es: ${JSON.stringify(
+      data.currentWeather
+    )} y la hora es ${JSON.stringify(data.hourForecast)}`;
+
+    const response = await Gemini_AI.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: prompt,
+    });
+
+    return response.text;
+  } catch (error) {
+    console.error("Error al generar contenido con Gemini AI:", error);
+    throw error;
+  }
 }

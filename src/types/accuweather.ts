@@ -156,3 +156,9 @@ export interface HourlyForecast {
   };
   CloudCover: number;
 }
+
+export interface AllInfo {
+  currentWeather: CurrentWeather | null;
+  forecast: FiveDayForecast | null;
+  hourForecast: HourlyForecast[] | null;
+}

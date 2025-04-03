@@ -5,6 +5,7 @@ import {
   CurrentWeather,
   FiveDayForecast,
   HourlyForecast,
+  AllInfo,
 } from "@/types/accuweather";
 import SearchBar from "./SearchBar";
 import CurrentWeatherCard from "./CurrentWeatherCard";
@@ -17,6 +18,7 @@ import {
   getTwelveHoursForecast,
 } from "@/lib/api";
 import { useUnits } from "@/context/UnitsContext";
+import Suggestion from "./Suggestions";
 
 export default function WeatherDashboard() {
   const [selectedLocation, setSelectedLocation] =
@@ -25,10 +27,14 @@ export default function WeatherDashboard() {
     null
   );
   const [forecast, setForecast] = useState<FiveDayForecast | null>(null);
-  const [hourForecast, setHourForecast] = useState<HourlyForecast[] | null>(null);
+  const [hourForecast, setHourForecast] = useState<HourlyForecast[] | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { units, toggleUnits } = useUnits();
+
+  const [allInfo, setAllInfo] = useState<AllInfo | null>(null);
   // const auxWeatherData = {
   //   LocalObservationDateTime: "2025-04-01T15:35:00-03:00",
   //   EpochTime: 1743532500,
@@ -798,7 +804,7 @@ export default function WeatherDashboard() {
   //     Link: "http://www.accuweather.com/es/ar/la-rioja/4573/hourly-weather-forecast/4573?day=2&hbhhour=3&unit=c",
   //   },
   // ];
- 
+
   useEffect(() => {
     // Función para obtener la ubicación del usuario
     const getUserLocation = () => {
@@ -829,7 +835,7 @@ export default function WeatherDashboard() {
     };
 
     getUserLocation();
-  }, []);
+  }, [units]);
 
   const handleLocationSelect = async (location: LocationSearchResult) => {
     try {
@@ -847,7 +853,15 @@ export default function WeatherDashboard() {
 
       setCurrentWeather(weatherData);
       setForecast(forecastData);
-      setHourForecast(Array.isArray(hourForecast) ? hourForecast : [])    } catch (err) {
+      setHourForecast(Array.isArray(hourForecast) ? hourForecast : []);
+
+      // Guardar todos los datos en allInfo
+      setAllInfo({
+        currentWeather: weatherData,
+        forecast: forecastData,
+        hourForecast: Array.isArray(hourForecast) ? hourForecast : [],
+      });
+    } catch (err) {
       setError("Error al obtener datos del clima. Inténtalo de nuevo.");
       console.error(err);
     } finally {
@@ -858,7 +872,9 @@ export default function WeatherDashboard() {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4 sm:mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">AccuWeather App</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-center sm:text-left">
+          AccuWeather App
+        </h1>
         <button
           onClick={toggleUnits}
           className="px-3 py-2 rounded bg-sky-950 hover:bg-sky-900 cursor-pointer w-full sm:w-auto text-white text-sm sm:text-base"
@@ -866,7 +882,7 @@ export default function WeatherDashboard() {
           {units === "metric" ? "Cambiar a °F" : "Cambiar a °C"}
         </button>
       </div>
-      
+
       <div className="mb-4 sm:mb-6">
         <SearchBar
           onSearch={searchLocation}
@@ -877,7 +893,9 @@ export default function WeatherDashboard() {
       {loading && (
         <div className="text-center py-6 sm:py-10">
           <div className="w-10 h-10 sm:w-12 sm:h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-3 sm:mt-4 text-sm sm:text-base">Cargando datos del clima...</p>
+          <p className="mt-3 sm:mt-4 text-sm sm:text-base">
+            Cargando datos del clima...
+          </p>
         </div>
       )}
 
@@ -892,7 +910,7 @@ export default function WeatherDashboard() {
           <CurrentWeatherCard
             weather={currentWeather}
             locationName={selectedLocation.LocalizedName}
-            hourly={hourForecast ||[]}
+            hourly={hourForecast || []}
           />
         </div>
       )}
@@ -902,6 +920,8 @@ export default function WeatherDashboard() {
           <ForecastList forecast={forecast} />
         </div>
       )}
+
+      {allInfo && <Suggestion allInfo={allInfo} />}
     </div>
   );
 }
